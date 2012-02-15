@@ -28,7 +28,7 @@ Create the table (using the sequel migration syntax):
 
 ## Build Status
 
-[![Build Status](http://travis-ci.org/TalentBox/delayed_job_sequel.png)](https://travis-ci.org/TalentBox/delayed_job_sequel)
+[![Build Status](https://secure.travis-ci.org/TalentBox/delayed_job_sequel.png?branch=master)](http://travis-ci.org/TalentBox/delayed_job_sequel)
 
 ## How to contribute
 
