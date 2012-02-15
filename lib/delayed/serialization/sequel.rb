@@ -1,15 +1,14 @@
 require "sequel/model"
-
 module Delayed
   module Serialization
     module Sequel
       def self.configure(klass)
         klass.class_eval do
-          def self.inherited(child)
-            super
-            if YAML.parser.class.name =~ /syck/i
-              child.yaml_as "tag:ruby.yaml.org,2002:#{child.name}"
-            else
+          if YAML.parser.class.name =~ /syck/i
+            yaml_as "tag:ruby.yaml.org,2002:Sequel"
+          else
+            def self.inherited(child)
+              super
               child.yaml_as ['!ruby/Sequel', child.name].join(':')
             end
           end
@@ -19,8 +18,9 @@ module Delayed
       if YAML.parser.class.name =~ /syck/i
         module ClassMethods
           def yaml_new(klass, tag, val)
-            klass[val['values'][klass.primary_key]] ||
-            raise(Delayed::DeserializationError, "Sequel Record not found, class: #{klass} , primary key: #{val['values'][klass.primary_key]}")
+            pk = val["values"][klass.primary_key]
+            klass[pk] ||
+            raise(Delayed::DeserializationError, "Sequel Record not found, class: #{klass} , primary key: #{pk}")
           end
         end
       end
@@ -28,7 +28,7 @@ module Delayed
       module InstanceMethods
         if YAML.parser.class.name =~ /syck/i
           def to_yaml_properties
-            ['@values']
+            ["@values"]
           end
         else
           def encode_with(coder)

@@ -1,4 +1,0 @@
-sqlite:
-  adapter: sqlite
-  database: ":memory:"
-
