@@ -6,7 +6,6 @@ require "rspec"
 require "logger"
 require "sqlite3"
 require "sequel"
-require "pry"
 
 config = YAML.load(File.read("spec/database.yml"))
 DB = Sequel.connect config["sqlite"]
