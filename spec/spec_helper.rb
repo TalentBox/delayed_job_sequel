@@ -19,9 +19,9 @@ Class.new(Sequel::Migration) do
       Integer :attempts, :default => 0
       String  :handler, :text => true
       String  :last_error, :text => true
-      column  :run_at,    :datetime#"timestamp(0)"
-      column  :locked_at, :datetime#"timestamp(0)"
-      column  :failed_at, :datetime#"timestamp(0)"
+      Time    :run_at
+      Time    :locked_at
+      Time    :failed_at
       String  :locked_by
       String  :queue
       Time    :created_at

@@ -4,14 +4,27 @@
 
 Add the gem to your Gemfile:
 
-    gem 'delayed_job_sequel'
+    gem 'talentbox-delayed_job_sequel'
 
 Run `bundle install`.
 
-If you're using Rails, run the generator to create the migration for the delayed_job table.
+Create the table (using the sequel migration syntax):
 
-    rails g delayed_job:sequel
-    rake db:migrate
+    create_table :delayed_jobs do
+      primary_key :id
+      Integer :priority, :default => 0
+      Integer :attempts, :default => 0
+      String  :handler, :text => true
+      String  :last_error, :text => true
+      Time    :run_at
+      Time    :locked_at
+      Time    :failed_at
+      String  :locked_by
+      String  :queue
+      Time    :created_at
+      Time    :updated_at
+      index   [:priority, :run_at]
+    end
 
 ## Build Status
 
