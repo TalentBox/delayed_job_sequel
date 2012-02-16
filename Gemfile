@@ -6,6 +6,11 @@ platform :ruby_18 do
   gem "sequel", "3.28.0"
 end
 
-gem "mysql2"
-gem "pg"
-gem "sqlite3"
+case ENV["DB"]
+when "mysql"
+  gem "mysql2"
+when "postgres"
+  gem "pg"
+else
+  gem "sqlite3"
+end
