@@ -5,10 +5,30 @@ require "rubygems"
 require "bundler/setup"
 require "rspec"
 require "logger"
-require "sqlite3"
 require "sequel"
 
-DB = Sequel.sqlite
+DB = case ENV["DB"]
+when "mysql"
+  begin
+    Sequel.connect :adapter => "mysql2", :database => "delayed_jobs", :test => true
+  rescue Sequel::DatabaseConnectionError
+    system "mysql -e 'CREATE DATABASE IF NOT EXISTS `delayed_jobs` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_unicode_ci'"
+    retry
+  end
+when "postgres"
+  begin
+    Sequel.connect :adapter => "postgres", :database => "delayed_jobs", :test => true
+  rescue Sequel::DatabaseConnectionError
+    system "createdb --encoding=UTF8 delayed_jobs"
+    retry
+  end
+else
+  Sequel.sqlite
+end
+
+DB.drop_table :delayed_jobs rescue Sequel::DatabaseError
+DB.drop_table :stories rescue Sequel::DatabaseError
+
 DB.create_table :delayed_jobs do
   primary_key :id
   Integer :priority, :default => 0
