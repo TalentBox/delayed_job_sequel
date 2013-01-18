@@ -9,11 +9,20 @@ describe Delayed::Backend::Sequel::Job do
   it_should_behave_like "a delayed_job backend"
 
   context ".count" do
-    it "allow using ActiveRecord like count for NewRelic sampler" do
-      expect do
-        Delayed::Job.count(:conditions => "failed_at is not NULL")
-        Delayed::Job.count(:conditions => "locked_by is not NULL")
-      end.to_not raise_error
+    context "NewRelic sampler compat" do
+      it "allow count with conditions" do
+        expect do
+          Delayed::Job.count(:conditions => "failed_at is not NULL").should == 1
+          Delayed::Job.count(:conditions => "locked_by is not NULL").should == 0
+        end.to_not raise_error
+      end
+
+      it "allow count with group and conditions" do
+        expect do
+          Delayed::Job.count(:group => "queue", :conditions => ['run_at < ? and failed_at is NULL', Time.now]).should =~ [["queue", 1]]
+          Delayed::Job.count(:group => "priority", :conditions => ['run_at < ? and failed_at is NULL', Time.now]).should =~ [["priority", 1]]
+        end.to_not raise_error
+      end
     end
   end
 

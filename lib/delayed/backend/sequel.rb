@@ -120,7 +120,15 @@ module Delayed
 
         def self.count(attrs={})
           if attrs.respond_to?(:has_key?) && attrs.has_key?(:conditions)
-            self.where(attrs[:conditions]).count
+            ds = self.where(attrs[:conditions])
+            if attrs.has_key?(:group)
+              column = attrs[:group]
+              group_and_count(column.to_sym).map do |record|
+                [column, record[:count]]
+              end
+            else
+              ds.count
+            end
           else
             super()
           end
