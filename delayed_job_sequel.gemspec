@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name              = "talentbox-delayed_job_sequel"
-  s.version           = "0.1.0"
+  s.version           = "0.1.1"
   s.authors           = ["Jonathan Tron"]
   s.summary           = "Sequel backend for DelayedJob"
   s.description       = "Sequel backend for DelayedJob, originally authored by Tobias Luetke"
