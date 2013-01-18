@@ -8,6 +8,15 @@ describe Delayed::Backend::Sequel::Job do
 
   it_should_behave_like "a delayed_job backend"
 
+  context ".count" do
+    it "allow using ActiveRecord like count for NewRelic sampler" do
+      expect do
+        Delayed::Job.count(:conditions => "failed_at is not NULL")
+        Delayed::Job.count(:conditions => "locked_by is not NULL")
+      end.to_not raise_error
+    end
+  end
+
   context "db_time_now" do
     it "should return time in current time zone if set" do
       Time.zone = "Eastern Time (US & Canada)"

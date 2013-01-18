@@ -117,7 +117,15 @@ module Delayed
             yield
           end
         end
-  
+
+        def self.count(attrs={})
+          if attrs.respond_to?(:has_key?) && attrs.has_key?(:conditions)
+            self.where(attrs[:conditions]).count
+          else
+            super()
+          end
+        end
+
         # The default behaviour for sequel on #==/#eql? is to check if all 
         # values are matching.
         # This differs from ActiveRecord which checks class and id only.
@@ -125,6 +133,7 @@ module Delayed
         def eql?(obj)
           (obj.class == model) && (obj.pk == pk)
         end
+
       end
     end
   end
