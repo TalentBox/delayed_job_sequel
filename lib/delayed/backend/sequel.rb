@@ -37,16 +37,24 @@ module Delayed
           filter(:locked_by => worker_name).update(:locked_by => nil, :locked_at => nil)
         end
 
-        # Find a few candidate jobs to run (in case some immediately get locked by others).
-        def self.find_available(worker_name, limit = 5, max_run_time = Worker.max_run_time)
-          set = ready_to_run(worker_name, max_run_time)
+        def self.reserve(worker, max_run_time = Worker.max_run_time)
+          set = ready_to_run(worker.name, max_run_time)
           set = set.filter("priority >= ?", Worker.min_priority) if Worker.min_priority
           set = set.filter("priority <= ?", Worker.max_priority) if Worker.max_priority
           set = set.filter(:queue => Worker.queues) if Worker.queues.any?
 
-          silence_log do
-            set.by_priority.limit(limit).all
+          job = set.by_priority.first
+
+          now = self.db_time_now
+
+          return unless job
+          model.db.transaction do
+            job.lock!
+            job.locked_at = now
+            job.locked_by = worker.name
+            job.save(:raise_on_failure => true)
           end
+          job
         end
 
         # Lock this job for this worker.
@@ -134,7 +142,7 @@ module Delayed
           end
         end
 
-        # The default behaviour for sequel on #==/#eql? is to check if all 
+        # The default behaviour for sequel on #==/#eql? is to check if all
         # values are matching.
         # This differs from ActiveRecord which checks class and id only.
         # To pass the specs we're reverting to what AR does here.

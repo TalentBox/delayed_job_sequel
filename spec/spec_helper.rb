@@ -53,7 +53,7 @@ end
 require "delayed_job_sequel"
 require "delayed/backend/shared_spec"
 
-Delayed::Worker.logger = Logger.new("/tmp/dj.log")
+Delayed::Worker.logger = Logger.new(ENV["DEBUG"] ? $stdout : "/tmp/dj.log")
 DB.logger = Delayed::Worker.logger
 
 # Purely useful for test cases...
