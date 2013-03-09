@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name              = "talentbox-delayed_job_sequel"
-  s.version           = "0.1.2"
+  s.version           = "4.0.0.beta1"
   s.authors           = ["Jonathan Tron"]
   s.summary           = "Sequel backend for DelayedJob"
   s.description       = "Sequel backend for DelayedJob, originally authored by Tobias Luetke"
@@ -16,9 +16,9 @@ Gem::Specification.new do |s|
   s.test_files        = Dir.glob("spec/**/*")
 
   s.add_runtime_dependency      "sequel",        "~> 3.28"
-  s.add_runtime_dependency      "delayed_job",   "~> 3.0.0"
+  s.add_runtime_dependency      "delayed_job",   "~> 4.0.0.beta1"
   s.add_runtime_dependency      "tzinfo"
 
-  s.add_development_dependency  "rspec",          "~> 2.0"
+  s.add_development_dependency  "rspec",          "~> 2.13"
   s.add_development_dependency  "rake",           "~> 0.8"
 end
