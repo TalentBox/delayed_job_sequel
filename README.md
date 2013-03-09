@@ -1,5 +1,8 @@
 # DelayedJob Sequel Backend
 
+[![Build Status](https://secure.travis-ci.org/TalentBox/delayed_job_sequel.png?branch=master)](http://travis-ci.org/TalentBox/delayed_job_sequel)
+[![Code Climate](https://codeclimate.com/github/TalentBox/delayed_job_sequel.png)](https://codeclimate.com/github/TalentBox/delayed_job_sequel)
+
 ## Compatibility
 
 This gem works on Ruby (MRI/CRuby) 1.8.x, 1.9.x and Rubinius (1.8 and 1.9 mode).
@@ -34,10 +37,6 @@ Create the table (using the sequel migration syntax):
       Time    :updated_at
       index   [:priority, :run_at]
     end
-
-## Build Status
-
-[![Build Status](https://secure.travis-ci.org/TalentBox/delayed_job_sequel.png?branch=master)](http://travis-ci.org/TalentBox/delayed_job_sequel)
 
 ## How to contribute
 
