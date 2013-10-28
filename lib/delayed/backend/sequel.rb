@@ -48,10 +48,17 @@ module Delayed
           now = self.db_time_now
 
           return unless job
+          claim_job(job, now, worker.name)
+        end
+
+        def self.claim_job(job, now, worker_name)
           model.db.transaction do
             job.lock!
+            if job.locked_at
+              return nil
+            end
             job.locked_at = now
-            job.locked_by = worker.name
+            job.locked_by = worker_name
             job.save(:raise_on_failure => true)
           end
           job

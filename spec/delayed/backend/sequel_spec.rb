@@ -26,6 +26,14 @@ describe Delayed::Backend::Sequel::Job do
     end
   end
 
+  describe "claim_job" do
+    it "return nil if the job already claimed by other worker" do
+      now = DateTime.now
+      job = described_class.create(:payload_object => SimpleJob.new, :locked_at => DateTime.now)
+      Delayed::Backend::Sequel::Job.claim_job(job, now, "the_worker_name").should be_nil
+    end
+  end
+
   context "db_time_now" do
     it "should return time in current time zone if set" do
       Time.zone = "Eastern Time (US & Canada)"
