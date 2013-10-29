@@ -12,3 +12,7 @@ env:
   - DB=postgres SEQUEL='~> 3.38'
   - DB=postgres SEQUEL='~> 4.0'
 gemfile: ci/Gemfile.ci
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: rbx-2.1.1
