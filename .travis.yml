@@ -11,4 +11,4 @@ env:
   - DB=mysql SEQUEL='~> 4.0'
   - DB=postgres SEQUEL='~> 3.38'
   - DB=postgres SEQUEL='~> 4.0'
-gemfile: gemfiles/Gemfile.ci
+gemfile: ci/Gemfile.ci
