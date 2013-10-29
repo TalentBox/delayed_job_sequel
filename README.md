@@ -38,6 +38,12 @@ Create the table (using the sequel migration syntax):
       index   [:priority, :run_at]
     end
 
+## Contributors
+
+Improvements has been made by those awesome contributors:
+
+* Mark Rushakoff (mark-rushakoff)
+
 ## How to contribute
 
 If you find what looks like a bug:
