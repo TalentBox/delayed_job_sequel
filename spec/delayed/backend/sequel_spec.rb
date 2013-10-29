@@ -14,12 +14,22 @@ describe Delayed::Backend::Sequel::Job do
         described_class.create(payload_object: SimpleJob.new)
       end
 
-      20.times.map do
-        Thread.new { Delayed::Worker.new.work_off(4) }
+      20.times.map do |i|
+        Thread.new do
+          worker = Delayed::Worker.new
+          worker.name = "worker_#{i}"
+          worker.work_off(4)
+        end
       end.map(&:join)
     }.not_to raise_error
 
     expect(Delayed::Job.count).to be < 10
+  end
+
+  it "does not fail when trying to delete a job alredy deleted" do
+    job = described_class.create(payload_object: SimpleJob.new)
+    job.destroy.should_not be_false
+    job.destroy.should be_false
   end
 
   context ".count" do
