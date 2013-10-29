@@ -17,15 +17,17 @@ module Delayed
           db_time_now = model.db_time_now
           lock_upper_bound = db_time_now - max_run_time
           filter do
-            ( (run_at <= db_time_now) &
-              ({:locked_at => nil} | (locked_at < lock_upper_bound)) |
+            (
+              (run_at <= db_time_now) &
+              ::Sequel.expr(:locked_at => nil) |
+              (::Sequel.expr(:locked_at) < lock_upper_bound) |
               {:locked_by => worker_name}
             ) & {:failed_at => nil}
           end
         end
 
         def_dataset_method :by_priority do
-          order(:priority.asc, :run_at.asc)
+          order(::Sequel.expr(:priority).asc, ::Sequel.expr(:run_at).asc)
         end
 
         def self.before_fork
@@ -38,23 +40,21 @@ module Delayed
         end
 
         def self.reserve(worker, max_run_time = Worker.max_run_time)
-          set = ready_to_run(worker.name, max_run_time)
-          set = set.filter("priority >= ?", Worker.min_priority) if Worker.min_priority
-          set = set.filter("priority <= ?", Worker.max_priority) if Worker.max_priority
-          set = set.filter(:queue => Worker.queues) if Worker.queues.any?
+          ds = ready_to_run(worker.name, max_run_time)
+          ds = ds.filter("priority >= ?", Worker.min_priority) if Worker.min_priority
+          ds = ds.filter("priority <= ?", Worker.max_priority) if Worker.max_priority
+          ds = ds.filter(:queue => Worker.queues) if Worker.queues.any?
+          ds = ds.by_priority
+          ds = ds.for_update
 
-          job = set.by_priority.first
-
-          now = self.db_time_now
-
-          return unless job
-          model.db.transaction do
-            job.lock!
-            job.locked_at = now
-            job.locked_by = worker.name
-            job.save(:raise_on_failure => true)
+          db.transaction do
+            if job = ds.first
+              job.locked_at = self.db_time_now
+              job.locked_by = worker.name
+              job.save(:raise_on_failure => true)
+              job
+            end
           end
-          job
         end
 
         # Lock this job for this worker.
@@ -98,7 +98,7 @@ module Delayed
         end
 
         def self.delete_all
-          delete
+          dataset.delete
         end
 
         def reload(*args)
@@ -147,7 +147,7 @@ module Delayed
         # This differs from ActiveRecord which checks class and id only.
         # To pass the specs we're reverting to what AR does here.
         def eql?(obj)
-          (obj.class == model) && (obj.pk == pk)
+          (obj.class == self.class) && (obj.pk == pk)
         end
 
       end
