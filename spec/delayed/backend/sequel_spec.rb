@@ -26,12 +26,6 @@ describe Delayed::Backend::Sequel::Job do
     expect(Delayed::Job.count).to be < 10
   end
 
-  it "does not fail when trying to delete a job alredy deleted" do
-    job = described_class.create(payload_object: SimpleJob.new)
-    job.destroy.should_not be_false
-    job.destroy.should be_false
-  end
-
   context ".count" do
     context "NewRelic sampler compat" do
       it "allow count with conditions" do

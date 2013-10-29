@@ -91,12 +91,6 @@ module Delayed
           new(attrs).save :raise_on_failure => true
         end
 
-        def destroy
-          super
-        rescue ::Sequel::NoExistingObject
-          false
-        end
-
         def self.silence_log(&block)
           if db.respond_to?(:logger) && db.logger.respond_to?(:silence)
             db.logger.silence &block
