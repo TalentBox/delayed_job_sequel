@@ -5,12 +5,9 @@
 
 ## Compatibility
 
-This gem works on Ruby (MRI/CRuby) 1.8.x, 1.9.x and Rubinius (1.8 and 1.9 mode).
+This gem works on Ruby (MRI/CRuby) 1.9.3 and 2.0.x.
 
-But beware, if you're running it on Ruby (MRI/CRuby) 1.8.x or Rubinius in 1.8 mode you need
-to use a version of Sequel <= 3.28.0.
-
-It's strongly recommended to use a Ruby 1.9.x version.
+It's strongly recommended to use a Ruby >= 1.9.3 version.
 
 ## Installation
 
