@@ -1,6 +1,8 @@
-source 'https://rubygems.org'
+source "http://rubygems.org"
 
-gemspec
+gemspec :path => "../"
+
+gem "sequel", "#{ENV["SEQUEL"]}"
 
 case ENV["DB"]
 when "mysql"

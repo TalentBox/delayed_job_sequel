@@ -1,13 +1,14 @@
+language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - rbx-19mode
-  - rbx-18mode
-only:
-  - master
+  - ruby-head
+  - rbx-2.1.1
 env:
-  - DB=sqlite
-  - DB=mysql
-  - DB=postgres
-notifications:
-  disabled: true
+  - DB=sqlite SEQUEL='~> 3.38'
+  - DB=sqlite SEQUEL='~> 4.0'
+  - DB=mysql SEQUEL='~> 3.38'
+  - DB=mysql SEQUEL='~> 4.0'
+  - DB=postgres SEQUEL='~> 3.38'
+  - DB=postgres SEQUEL='~> 4.0'
+gemfile: gemfiles/Gemfile.ci
