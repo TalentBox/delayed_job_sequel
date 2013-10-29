@@ -8,6 +8,20 @@ describe Delayed::Backend::Sequel::Job do
 
   it_should_behave_like "a delayed_job backend"
 
+  it "does not allow more than 1 worker to grab the same job" do
+    expect {
+      10.times do
+        described_class.create(payload_object: SimpleJob.new)
+      end
+
+      20.times.map do
+        Thread.new { Delayed::Worker.new.work_off(4) }
+      end.map(&:join)
+    }.not_to raise_error
+
+    expect(Delayed::Job.count).to be < 10
+  end
+
   context ".count" do
     context "NewRelic sampler compat" do
       it "allow count with conditions" do
