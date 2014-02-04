@@ -16,11 +16,16 @@ matrix:
   exclude:
     - rvm: jruby-19mode
       env: DB=sqlite SEQUEL='~> 3.38'
+      gemfile: ci/Gemfile.ci
     - rvm: jruby-19mode
       env: DB=sqlite SEQUEL='~> 4.0'
+      gemfile: ci/Gemfile.ci
     - rvm: jruby-19mode
       env: DB=mysql SEQUEL='~> 3.38'
+      gemfile: ci/Gemfile.ci
     - rvm: jruby-19mode
       env: DB=mysql SEQUEL='~> 4.0'
+      gemfile: ci/Gemfile.ci
     - rvm: jruby-19mode
       env: DB=postgres SEQUEL='~> 3.38'
+      gemfile: ci/Gemfile.ci
