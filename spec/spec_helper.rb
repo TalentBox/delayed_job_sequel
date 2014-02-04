@@ -22,7 +22,7 @@ when "mysql"
 when "postgres"
   begin
     if jruby?
-      Sequel.connect "jdbc:postgresql://localhost/delayed_jobs"
+      Sequel.connect "jdbc:postgresql://localhost/delayed_jobs", test: true
     else
       Sequel.connect adapter: "postgres", database: "delayed_jobs", test: true
     end
