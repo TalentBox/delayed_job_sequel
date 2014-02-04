@@ -6,11 +6,6 @@ module Delayed
         klass.class_eval do
           if YAML.parser.class.name =~ /syck/i
             yaml_as "tag:ruby.yaml.org,2002:Sequel"
-          else
-            def self.inherited(child)
-              super
-              child.yaml_as ['!ruby/Sequel', child.name].join(':')
-            end
           end
         end
       end
@@ -33,7 +28,6 @@ module Delayed
         else
           def encode_with(coder)
             coder["values"] = @values
-            coder.tag = ['!ruby/Sequel', self.class.name].join(':')
           end
 
           def init_with(coder)
@@ -47,4 +41,5 @@ module Delayed
     end
   end
 end
+
 Sequel::Model.plugin Delayed::Serialization::Sequel

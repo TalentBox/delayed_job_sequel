@@ -7,17 +7,21 @@ require "rspec"
 require "logger"
 require "sequel"
 
+def jruby?
+  (defined?(RUBY_ENGINE) && RUBY_ENGINE=="jruby") || defined?(JRUBY_VERSION)
+end
+
 DB = case ENV["DB"]
 when "mysql"
   begin
-    Sequel.connect :adapter => "mysql2", :database => "delayed_jobs", :test => true
+    Sequel.connect adapter: "mysql2", database: "delayed_jobs", test: true
   rescue Sequel::DatabaseConnectionError
     system "mysql -e 'CREATE DATABASE IF NOT EXISTS `delayed_jobs` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_unicode_ci'"
     retry
   end
 when "postgres"
   begin
-    if (defined?(RUBY_ENGINE) && RUBY_ENGINE=="jruby") || defined?(JRUBY_VERSION)
+    if jruby?
       Sequel.connect "jdbc:postgresql://localhost/delayed_jobs"
     else
       Sequel.connect adapter: "postgres", database: "delayed_jobs", test: true

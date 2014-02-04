@@ -9,8 +9,7 @@ when "mysql"
   gem "mysql2"
 when "postgres"
   platforms :mri do
-    gem "pg", "0.15.1"
-    gem "sequel_pg", "1.6.8"
+    gem "pg"
   end
   platforms :jruby do
     gem "jdbc-postgres"
