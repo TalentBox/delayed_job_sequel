@@ -17,7 +17,11 @@ when "mysql"
   end
 when "postgres"
   begin
-    Sequel.connect :adapter => "postgres", :database => "delayed_jobs", :test => true
+    if (defined?(RUBY_ENGINE) && RUBY_ENGINE=="jruby") || defined?(JRUBY_VERSION)
+      Sequel.connect "jdbc:postgresql://localhost/delayed_jobs"
+    else
+      Sequel.connect adapter: "postgres", database: "delayed_jobs", test: true
+    end
   rescue Sequel::DatabaseConnectionError
     system "createdb --encoding=UTF8 delayed_jobs"
     retry
