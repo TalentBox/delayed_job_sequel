@@ -4,9 +4,6 @@ rvm:
   - 2.0.0
   - 2.1.0
   - jruby-19mode
-  - jruby-20mode
-  - ruby-head
-  - rbx-2.1.1
 env:
   - DB=sqlite SEQUEL='~> 3.38'
   - DB=sqlite SEQUEL='~> 4.0'
@@ -16,6 +13,14 @@ env:
   - DB=postgres SEQUEL='~> 4.0'
 gemfile: ci/Gemfile.ci
 matrix:
-  allow_failures:
-    - rvm: ruby-head
-    - rvm: rbx-2.1.1
+  exclude:
+    - rvm: jruby-19mode
+      env: DB=sqlite SEQUEL='~> 3.38'
+    - rvm: jruby-19mode
+      env: DB=sqlite SEQUEL='~> 4.0'
+    - rvm: jruby-19mode
+      env: DB=mysql SEQUEL='~> 3.38'
+    - rvm: jruby-19mode
+      env: DB=mysql SEQUEL='~> 4.0'
+    - rvm: jruby-19mode
+      env: DB=postgres SEQUEL='~> 3.38'
