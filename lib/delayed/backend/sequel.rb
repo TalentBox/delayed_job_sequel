@@ -105,7 +105,7 @@ module Delayed
             if attrs.has_key?(:group)
               column = attrs[:group]
               group_and_count(column.to_sym).map do |record|
-                [column, record[:count]]
+                [record[column.to_sym], record[:count]]
               end
             else
               ds.count
