@@ -1,3 +1,18 @@
+4.1.0 (2015-02-12)
+==================
+
+* Allow overriding the Job table name
+
+**BREAKING CHANGE**
+
+In order to support the Job's table name override, requiring `delayed_job_sequel`
+no longer set the backend. You will have to do it manually (for example in an
+initializer):
+
+```ruby
+::Delayed::Job.backend = :sequel
+```
+
 4.0.1 (2013-02-04)
 ==================
 

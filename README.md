@@ -17,6 +17,14 @@ Add the gem to your Gemfile:
 
 Run `bundle install`.
 
+Create an initializer to setup the DelayedJob backend:
+
+```ruby
+# config/initializers/delayed_job.rb
+
+::Delayed::Job.backend = :sequel
+```
+
 Create the table (using the sequel migration syntax):
 
     create_table :delayed_jobs do
