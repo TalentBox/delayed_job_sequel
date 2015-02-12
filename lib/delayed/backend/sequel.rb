@@ -4,7 +4,7 @@ module Delayed
     module Sequel
       # A job object that is persisted to the database.
       # Contains the work object as a YAML field.
-      class Job < ::Sequel::Model(:delayed_jobs)
+      class Job < ::Sequel::Model(::DelayedJobSequel.table_name)
         include Delayed::Backend::Base
         plugin :timestamps
 

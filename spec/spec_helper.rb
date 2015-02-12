@@ -64,6 +64,8 @@ require "delayed/backend/shared_spec"
 Delayed::Worker.logger = Logger.new(ENV["DEBUG"] ? $stdout : "/tmp/dj.log")
 DB.logger = Delayed::Worker.logger
 
+Delayed::Worker.backend = :sequel
+
 # Purely useful for test cases...
 class Story < Sequel::Model
   def tell; text; end
@@ -72,4 +74,5 @@ class Story < Sequel::Model
     update *args
   end
   handle_asynchronously :whatever
+  alias_method :persisted?, :exists?
 end

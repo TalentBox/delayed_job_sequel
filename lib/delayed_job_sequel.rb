@@ -1,6 +1,12 @@
 require 'sequel'
 require 'delayed_job'
-require 'delayed/backend/sequel'
-require 'delayed/serialization/sequel'
 
-Delayed::Worker.backend = :sequel
+module DelayedJobSequel
+  def self.table_name=(table_name)
+    @table_name = table_name
+  end
+
+  def self.table_name
+    @table_name || :delayed_jobs
+  end
+end
