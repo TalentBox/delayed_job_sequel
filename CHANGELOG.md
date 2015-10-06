@@ -10,7 +10,7 @@ no longer set the backend. You will have to do it manually (for example in an
 initializer):
 
 ```ruby
-::Delayed::Job.backend = :sequel
+::Delayed::Worker.backend = :sequel
 ```
 
 4.0.1 (2013-02-04)
