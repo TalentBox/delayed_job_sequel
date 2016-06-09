@@ -108,6 +108,8 @@ describe Delayed::Backend::Sequel::Job do
         Delayed::Job.table_name.should == :another_delayed_jobs
       ensure
         change_table_name nil
+        # Replace described_class with reloaded
+        self.class.metadata[:example_group][:described_class] = ::Delayed::Backend::Sequel::Job
       end
     end
   end
