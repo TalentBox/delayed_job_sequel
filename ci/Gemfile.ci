@@ -6,14 +6,24 @@ gem "sequel", "#{ENV["SEQUEL"]}"
 
 case ENV["DB"]
 when "mysql"
-  gem "mysql2"
+  platforms :ruby do
+    gem "mysql2"
+  end
+  platforms :jruby do
+    gem "jdbc-mysql"
+  end
 when "postgres"
-  platforms :mri do
+  platforms :ruby do
     gem "pg"
   end
   platforms :jruby do
     gem "jdbc-postgres"
   end
 else
-  gem "sqlite3"
+  platforms :ruby do
+    gem "sqlite3"
+  end
+  platforms :jruby do
+    gem "jdbc-sqlite3"
+  end
 end

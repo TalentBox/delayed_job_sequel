@@ -14,7 +14,11 @@ end
 DB = case ENV["DB"]
 when "mysql"
   begin
-    Sequel.connect adapter: "mysql2", database: "delayed_jobs", test: true
+    if jruby?
+      Sequel.connect "jdbc:mysql://localhost/delayed_jobs", test: true
+    else
+      Sequel.connect adapter: "mysql2", database: "delayed_jobs", test: true
+    end
   rescue Sequel::DatabaseConnectionError
     system "mysql -e 'CREATE DATABASE IF NOT EXISTS `delayed_jobs` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_unicode_ci'"
     retry
@@ -31,7 +35,10 @@ when "postgres"
     retry
   end
 else
-  Sequel.sqlite
+  if jruby?
+    Sequel.connect "jdbc:sqlite::memory:", test: true
+  else
+    Sequel.sqlite
 end
 
 DB.drop_table :delayed_jobs rescue Sequel::DatabaseError
