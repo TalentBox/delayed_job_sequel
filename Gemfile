@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-platforms :mri do
+platforms :ruby do
   gem "pg"
   gem "mysql2"
   gem "sqlite3"
