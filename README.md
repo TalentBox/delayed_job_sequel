@@ -47,9 +47,10 @@ Create the table (using the sequel migration syntax):
 
 Improvements has been made by those awesome contributors:
 
-* Mark Rushakoff (mark-rushakoff)
+* Mark Rushakoff (@mark-rushakoff)
 * Phan Le
 * Tim Labeeuw
+* James Goodhouse (@jamesgoodhouse)
 
 ## How to contribute
 
