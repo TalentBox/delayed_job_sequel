@@ -39,6 +39,7 @@ else
     Sequel.connect "jdbc:sqlite::memory:", test: true
   else
     Sequel.sqlite
+  end
 end
 
 DB.drop_table :delayed_jobs rescue Sequel::DatabaseError
