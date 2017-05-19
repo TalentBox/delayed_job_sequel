@@ -1,3 +1,8 @@
+4.2.1 (2017-05-19)
+==================
+
+* Use fully qualified name when rescuing Sequel::Error
+
 4.2.0 (2016-06-10)
 ==================
 
