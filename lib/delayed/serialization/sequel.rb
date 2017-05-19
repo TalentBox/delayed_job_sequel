@@ -33,7 +33,7 @@ module Delayed
           def init_with(coder)
             @values = coder["values"]
             reload
-          rescue Sequel::Error
+          rescue ::Sequel::Error
             raise Delayed::DeserializationError, "Sequel Record not found, class: #{self.class.name} , primary key: #{pk}"
           end
         end
