@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency      "delayed_job", "~> 4.1.0"
   s.add_runtime_dependency      "tzinfo"
 
-  s.add_development_dependency  "rspec", "~> 2.13"
+  s.add_development_dependency  "rspec", "~> 3.6.0"
   s.add_development_dependency  "rake"
 end

@@ -13,21 +13,26 @@ module Delayed
           set_default_run_at
         end
 
-        def_dataset_method :ready_to_run do |worker_name, max_run_time|
-          db_time_now = model.db_time_now
-          lock_upper_bound = db_time_now - max_run_time
-          filter do
-            (
-              (run_at <= db_time_now) &
-              ::Sequel.expr(:locked_at => nil) |
-              (::Sequel.expr(:locked_at) < lock_upper_bound) |
-              {:locked_by => worker_name}
-            ) & {:failed_at => nil}
+        dataset_module do
+          def ready_to_run(worker_name, max_run_time)
+            db_time_now = model.db_time_now
+            lock_upper_bound = db_time_now - max_run_time
+            filter do
+              (
+                (run_at <= db_time_now) &
+                ::Sequel.expr(:locked_at => nil) |
+                (::Sequel.expr(:locked_at) < lock_upper_bound) |
+                {:locked_by => worker_name}
+              ) & {:failed_at => nil}
+            end
           end
-        end
 
-        def_dataset_method :by_priority do
-          order(::Sequel.expr(:priority).asc, ::Sequel.expr(:run_at).asc)
+          def by_priority
+            order(
+              ::Sequel.expr(:priority).asc,
+              ::Sequel.expr(:run_at).asc
+            )
+          end
         end
 
         def self.before_fork
@@ -41,8 +46,8 @@ module Delayed
 
         def self.reserve(worker, max_run_time = Worker.max_run_time)
           ds = ready_to_run(worker.name, max_run_time)
-          ds = ds.filter("priority >= ?", Worker.min_priority) if Worker.min_priority
-          ds = ds.filter("priority <= ?", Worker.max_priority) if Worker.max_priority
+          ds = ds.filter(::Sequel.lit("priority >= ?", Worker.min_priority)) if Worker.min_priority
+          ds = ds.filter(::Sequel.lit("priority <= ?", Worker.max_priority)) if Worker.max_priority
           ds = ds.filter(:queue => Worker.queues) if Worker.queues.any?
           ds = ds.by_priority
           ds = ds.for_update
@@ -101,7 +106,13 @@ module Delayed
 
         def self.count(attrs={})
           if attrs.respond_to?(:has_key?) && attrs.has_key?(:conditions)
-            ds = self.where(attrs[:conditions])
+            conditions = case attrs[:conditions]
+            when Array
+              ::Sequel.lit(*attrs[:conditions])
+            else
+              ::Sequel.lit(attrs[:conditions])
+            end
+            ds = self.where conditions
             if attrs.has_key?(:group)
               column = attrs[:group]
               group_and_count(column.to_sym).map do |record|
