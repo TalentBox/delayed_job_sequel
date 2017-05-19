@@ -1,6 +1,8 @@
 4.2.1 (2017-05-19)
 ==================
 
+* Update specs to use the RSpec 3.6.0
+* Fix Sequel deprecation warnings when using `filter`
 * Use fully qualified name when rescuing Sequel::Error
 
 4.2.0 (2016-06-10)
