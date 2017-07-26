@@ -44,14 +44,28 @@ module Delayed
           filter(:locked_by => worker_name).update(:locked_by => nil, :locked_at => nil)
         end
 
+        # adapted from
+        # https://github.com/collectiveidea/delayed_job_active_record/blob/master/lib/delayed/backend/active_record.rb
         def self.reserve(worker, max_run_time = Worker.max_run_time)
           ds = ready_to_run(worker.name, max_run_time)
+
           ds = ds.filter(::Sequel.lit("priority >= ?", Worker.min_priority)) if Worker.min_priority
           ds = ds.filter(::Sequel.lit("priority <= ?", Worker.max_priority)) if Worker.max_priority
           ds = ds.filter(:queue => Worker.queues) if Worker.queues.any?
           ds = ds.by_priority
-          ds = ds.for_update
 
+          case ::Sequel::Model.db.database_type
+          when :mysql
+            lock_with_read_ahead(ds, worker)
+          else
+            lock_with_for_update(ds, worker)
+          end
+        end
+
+        # Lock a single job using SELECT ... FOR UPDATE.
+        # More performant but may cause deadlocks in some databases.
+        def self.lock_with_for_update(ds, worker)
+          ds = ds.for_update
           db.transaction do
             if job = ds.first
               job.locked_at = self.db_time_now
@@ -59,6 +73,15 @@ module Delayed
               job.save(:raise_on_failure => true)
               job
             end
+          end
+        end
+
+        # Fetch up-to `worker.read_ahead` jobs, try to lock one at a time.
+        # This query is more conservative as it does not acquire any DB read locks.
+        def self.lock_with_read_ahead(ds, worker)
+          ds.limit(worker.read_ahead).detect do |job|
+            count = ds.where(id: job.id).update(locked_at: self.db_time_now, locked_by: worker.name)
+            count == 1 && job.reload
           end
         end
 
