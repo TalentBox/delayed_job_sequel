@@ -1,3 +1,9 @@
+4.2.2 (2017-08-03)
+==================
+
+* Fix mysql deadlocks while reserving jobs (Lyle Franklin)
+  [#6](https://github.com/TalentBox/delayed_job_sequel/pull/6)
+
 4.2.1 (2017-05-19)
 ==================
 

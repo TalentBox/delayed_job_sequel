@@ -51,6 +51,7 @@ Improvements has been made by those awesome contributors:
 * Phan Le
 * Tim Labeeuw
 * James Goodhouse (@jamesgoodhouse)
+* Lyle Franklin (@ljfranklin)
 
 ## How to contribute
 
