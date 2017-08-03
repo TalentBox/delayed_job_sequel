@@ -14,20 +14,33 @@ describe Delayed::Backend::Sequel::Job do
 
   it "does not allow more than 1 worker to grab the same job" do
     expect do
-      10.times do
+      jobs_to_run = 200
+      workers_to_run = 20
+      jobs_per_worker = jobs_to_run/workers_to_run
+
+      jobs_to_run.times do
         described_class.create(payload_object: SimpleJob.new)
       end
 
-      20.times.map do |i|
+      workers_to_run.times.map do |i|
         Thread.new do
           worker = Delayed::Worker.new
           worker.name = "worker_#{i}"
-          worker.work_off(4)
+
+          # Ensure each worker performs the expected number of jobs as
+          # `work_off` will ocassionally perform less than the requested number
+          # if it is unable to lock a job within the `worker.read_ahead` limit
+          jobs_completed_by_this_worker = 0
+          while jobs_completed_by_this_worker < jobs_per_worker do
+            successes, failures = worker.work_off(jobs_per_worker - jobs_completed_by_this_worker)
+            expect(failures).to eq(0), "Expected zero failures, got #{failures}"
+            jobs_completed_by_this_worker += successes
+          end
         end
       end.map(&:join)
     end.not_to raise_error
 
-    expect(Delayed::Job.count).to be < 10
+    expect(Delayed::Job.count).to eql 0
   end
 
   context ".count" do
