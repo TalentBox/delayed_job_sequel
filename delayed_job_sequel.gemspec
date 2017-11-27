@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.require_paths     = ["lib"]
   s.test_files        = Dir.glob("spec/**/*")
 
-  s.add_runtime_dependency      "sequel", [">= 3.38", "< 5.0"]
+  s.add_runtime_dependency      "sequel", [">= 3.38", "< 6.0"]
   s.add_runtime_dependency      "delayed_job", "~> 4.1.0"
   s.add_runtime_dependency      "tzinfo"
 
