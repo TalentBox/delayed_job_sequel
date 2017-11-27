@@ -1,3 +1,9 @@
+dev
+===
+
+* Adds support for sequel 5 (Florent Piteau)
+  [#7](https://github.com/TalentBox/delayed_job_sequel/pull/7)
+
 4.2.2 (2017-08-03)
 ==================
 
