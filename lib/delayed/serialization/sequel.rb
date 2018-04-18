@@ -2,40 +2,62 @@ require "sequel/model"
 module Delayed
   module Serialization
     module Sequel
-      def self.configure(klass)
-        klass.class_eval do
-          if YAML.parser.class.name =~ /syck/i
-            yaml_as "tag:ruby.yaml.org,2002:Sequel"
+
+      module ClassMethods
+        def search_path
+          search_path_str = self.db["SHOW search_path"].get
+          search_path_str.split(/[\s,]+/).map{|s| s.gsub(/\A"|"\z/, '')}.map(&:to_sym)
+        end
+
+        def use_search_path(search_path, &block)
+          self.db.synchronize do
+            previous_search_path = search_path
+            begin
+              set_search_path(search_path)
+              yield
+            ensure
+              set_search_path(previous_search_path)
+            end
           end
         end
-      end
 
-      if YAML.parser.class.name =~ /syck/i
-        module ClassMethods
-          def yaml_new(klass, tag, val)
-            pk = val["values"][klass.primary_key]
-            klass[pk] ||
-            raise(Delayed::DeserializationError, "Sequel Record not found, class: #{klass} , primary key: #{pk}")
-          end
+      private
+
+        def set_search_path(search_path)
+          placeholders = search_path.map{'?'}.join(', ')
+          placeholders = "''" if placeholders.empty?
+          self.db["SET search_path TO #{placeholders}", *search_path].get
         end
-      end
 
+      end
       module InstanceMethods
-        if YAML.parser.class.name =~ /syck/i
-          def to_yaml_properties
-            ["@values"]
-          end
-        else
-          def encode_with(coder)
-            coder["values"] = @values
-          end
 
-          def init_with(coder)
-            @values = coder["values"]
+        def search_path
+          self.class.search_path
+        end
+
+        def use_search_path(search_path, &block)
+          self.class.use_search_path(search_path, &block)
+        end
+
+        def postgres?
+          self.class.db.database_type == :postgres
+        end
+
+        def encode_with(coder)
+          coder["values"] = @values
+          coder["search_path"] = search_path if postgres?
+        end
+
+        def init_with(coder)
+          @values = coder["values"]
+          if postgres? && coder["search_path"]
+            use_search_path(coder["search_path"]) { reload }
+          else
             reload
-          rescue ::Sequel::Error
-            raise Delayed::DeserializationError, "Sequel Record not found, class: #{self.class.name} , primary key: #{pk}"
           end
+        rescue ::Sequel::Error
+          raise Delayed::DeserializationError, "Sequel Record not found, class: #{self.class.name} , primary key: #{pk}"
         end
       end
     end
