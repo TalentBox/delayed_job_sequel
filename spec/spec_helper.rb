@@ -43,6 +43,7 @@ else
 end
 
 DB.drop_table :delayed_jobs rescue Sequel::DatabaseError
+DB.drop_table :another_delayed_jobs rescue Sequel::DatabaseError
 DB.drop_table :stories rescue Sequel::DatabaseError
 
 DB.create_table :delayed_jobs do

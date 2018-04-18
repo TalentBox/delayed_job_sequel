@@ -6,4 +6,5 @@ describe Sequel::Model do
       YAML.load(Story.create.to_yaml)
     end.not_to raise_error
   end
+
 end
