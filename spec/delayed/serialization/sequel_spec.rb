@@ -17,6 +17,7 @@ describe Sequel::Model do
 
       # create a Story inside the other schema
       yaml = Story.use_search_path([:other_schema]) do
+        DB.drop_table? :stories
         DB.create_table :stories do
           primary_key :story_id
           String      :text
