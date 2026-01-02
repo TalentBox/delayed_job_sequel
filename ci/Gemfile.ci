@@ -4,26 +4,16 @@ gemspec :path => "../"
 
 gem "sequel", "#{ENV["SEQUEL"]}"
 
-case ENV["TEST_ADAPTER"]
-when /mysql/
-  platforms :ruby do
-    gem "mysql2"
-  end
-  platforms :jruby do
-    gem "jdbc-mysql"
-  end
-when /postgres/
-  platforms :ruby do
-    gem "pg"
-  end
-  platforms :jruby do
-    gem "jdbc-postgres"
-  end
-else
-  platforms :ruby do
-    gem "sqlite3"
-  end
-  platforms :jruby do
-    gem "jdbc-sqlite3"
-  end
+# MRI Adapter Dependencies
+platform :ruby do
+  gem 'pg'
+  gem 'mysql2'
+  gem 'sqlite3'
+end
+
+# JRuby Adapter Dependencies
+platform :jruby do
+  gem 'jdbc-sqlite3'
+  gem 'jdbc-mysql'
+  gem 'jdbc-postgres'
 end
