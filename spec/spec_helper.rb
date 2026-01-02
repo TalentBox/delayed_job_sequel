@@ -14,7 +14,7 @@ end
 rspec_exclusions = {}
 rspec_exclusions[:skip_jdbc] = !jruby?
 rspec_exclusions[:postgres] = ENV['TEST_ADAPTER'] != 'postgresql'
-rspec_exclusions[:mysql] = !%w(mysql mysql2).include?(ENV['TEST_ADAPTER'])
+rspec_exclusions[:mysql] = !%w[mysql mysql2].include?(ENV['TEST_ADAPTER'])
 rspec_exclusions[:sqlite] = ENV['TEST_ADAPTER'] != 'sqlite3'
 
 RSpec.configure do |config|

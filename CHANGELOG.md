@@ -1,3 +1,9 @@
+dev
+===
+
+* Update `delayed-job` dependency to `~> 4.1` (Pedro Fayolle)
+  [#10](https://github.com/TalentBox/delayed_job_sequel/pull/10)
+
 4.3.0 (2017-11-27)
 ==================
 

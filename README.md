@@ -52,6 +52,7 @@ Improvements has been made by those awesome contributors:
 * James Goodhouse (@jamesgoodhouse)
 * Lyle Franklin (@ljfranklin)
 * Florent Piteau (@flop)
+* Pedro Fayolle (@pilaf)
 
 ## How to contribute
 
