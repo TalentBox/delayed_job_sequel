@@ -115,7 +115,7 @@ describe Delayed::Backend::Sequel::Job do
   end
 end
 
-describe Delayed::Backend::Sequel::Job, "override table name" do
+describe Delayed::Backend::Sequel::Job, "override table name", :postgres do
   it "allows to override the table name" do
     ::Sequel::Model.db.transaction rollback: :always do
       begin

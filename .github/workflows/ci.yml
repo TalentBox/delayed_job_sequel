@@ -91,7 +91,7 @@ jobs:
       - name: Run SQLite tests
         run: bundle exec rspec
         env:
-          TEST_ADAPTER: "sqlite3"
+          TEST_ADAPTER: sqlite3
           TEST_DATABASE: "db/database.sqlite3"
       - name: Lint
         run: bundle exec rubocop

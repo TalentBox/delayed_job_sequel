@@ -11,6 +11,16 @@ def jruby?
   (defined?(RUBY_ENGINE) && RUBY_ENGINE=="jruby") || defined?(JRUBY_VERSION)
 end
 
+rspec_exclusions = {}
+rspec_exclusions[:skip_jdbc] = !jruby?
+rspec_exclusions[:postgres] = ENV['TEST_ADAPTER'] != 'postgresql'
+rspec_exclusions[:mysql] = !%w(mysql mysql2).include?(ENV['TEST_ADAPTER'])
+rspec_exclusions[:sqlite] = ENV['TEST_ADAPTER'] != 'sqlite3'
+
+RSpec.configure do |config|
+  config.filter_run_excluding rspec_exclusions
+end
+
 db_host = ENV.fetch("TEST_DATABASE_HOST", "127.0.0.1")
 db_name = ENV.fetch("TEST_DATABASE", "delayed_jobs_test")
 
@@ -64,6 +74,7 @@ else
 end
 
 DB.drop_table :delayed_jobs rescue Sequel::DatabaseError
+DB.drop_table :another_delayed_jobs rescue Sequel::DatabaseError
 DB.drop_table :stories rescue Sequel::DatabaseError
 
 DB.create_table :delayed_jobs do
