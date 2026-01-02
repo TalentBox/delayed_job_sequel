@@ -1,13 +1,12 @@
 # DelayedJob Sequel Backend
 
-[![Build Status](https://secure.travis-ci.org/TalentBox/delayed_job_sequel.png?branch=master)](http://travis-ci.org/TalentBox/delayed_job_sequel)
-[![Code Climate](https://codeclimate.com/github/TalentBox/delayed_job_sequel.png)](https://codeclimate.com/github/TalentBox/delayed_job_sequel)
+[![CI](https://github.com/TalentBox/delayed_job_sequel/actions/workflows/ci.yml/badge.svg)](https://github.com/TalentBox/delayed_job_sequel/actions/workflows/ci.yml)
 
 ## Compatibility
 
-This gem works on Ruby (MRI/CRuby) 1.9.3 and 2.0.x.
+This gem is tested to work on `Ruby` (MRI/CRuby) `>= 3.4`, `Sequel` `~> 5.0`, and `DelayedJob` `~> 4.1`.
 
-It's strongly recommended to use a Ruby >= 1.9.3 version.
+It should work with older Ruby/Sequel/DelayedJob combinations, but we don't test those anymore.
 
 ## Installation
 
