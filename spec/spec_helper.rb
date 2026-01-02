@@ -83,4 +83,7 @@ class Story < Sequel::Model
   end
   handle_asynchronously :whatever
   alias_method :persisted?, :exists?
+  def save!
+    save(raise_on_failure: true)
+  end
 end
