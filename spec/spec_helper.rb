@@ -11,28 +11,49 @@ def jruby?
   (defined?(RUBY_ENGINE) && RUBY_ENGINE=="jruby") || defined?(JRUBY_VERSION)
 end
 
-DB = case ENV["DB"]
-when "mysql"
+db_host = ENV.fetch("TEST_DATABASE_HOST", "127.0.0.1")
+db_name = ENV.fetch("TEST_DATABASE", "delayed_jobs_test")
+
+DB = case ENV["TEST_ADAPTER"]
+when /mysql/
+  db_port = ENV.fetch("TEST_DATABASE_PORT", 3306)
+  opts = {test: true, encoding: ENV.fetch("TEST_ENCODING", "utf8")}
   begin
     if jruby?
-      Sequel.connect "jdbc:mysql://localhost/delayed_jobs", test: true
+      Sequel.connect "jdbc:mysql://#{db_host}:#{db_port}/#{db_name}", opts
     else
-      Sequel.connect adapter: "mysql2", database: "delayed_jobs", test: true
+      opts.merge!({database: db_name, host: db_host, port: db_port})
+      opts[:user] = ENV["TEST_USERNAME"] if ENV.key?("TEST_USERNAME")
+      opts[:password] = ENV["TEST_PASSWORD"] if ENV.key?("TEST_PASSWORD")
+      Sequel.connect({adapter: "mysql2"}.merge(opts))
     end
   rescue Sequel::DatabaseConnectionError
-    system "mysql -e 'CREATE DATABASE IF NOT EXISTS `delayed_jobs` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_unicode_ci'"
-    retry
+    if ENV.key? "CI"
+      raise
+    else
+      system "mysql -e 'CREATE DATABASE IF NOT EXISTS `#{db_name}` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_unicode_ci'"
+      retry
+    end
   end
-when "postgres"
+when /postgres/
+  db_port = ENV.fetch("TEST_DATABASE_PORT", 5432)
+  opts = {test: true, encoding: ENV.fetch("TEST_ENCODING", nil)}
   begin
     if jruby?
-      Sequel.connect "jdbc:postgresql://localhost/delayed_jobs", test: true
+      Sequel.connect "jdbc:postgresql://#{db_host}:#{db_port}/#{db_name}", opts
     else
-      Sequel.connect adapter: "postgres", database: "delayed_jobs", test: true
+      opts.merge!({database: db_name, host: db_host, port: db_port})
+      opts[:user] = ENV["TEST_USERNAME"] if ENV.key?("TEST_USERNAME")
+      opts[:password] = ENV["TEST_PASSWORD"] if ENV.key?("TEST_PASSWORD")
+      Sequel.connect({adapter: "postgres"}.merge(opts))
     end
   rescue Sequel::DatabaseConnectionError
-    system "createdb --encoding=UTF8 delayed_jobs"
-    retry
+    if ENV.key? "CI"
+      raise
+    else
+      system "createdb --encoding=UTF8 #{db_name}"
+      retry
+    end
   end
 else
   if jruby?
@@ -47,10 +68,10 @@ DB.drop_table :stories rescue Sequel::DatabaseError
 
 DB.create_table :delayed_jobs do
   primary_key :id
-  Integer :priority, :default => 0
-  Integer :attempts, :default => 0
-  String  :handler, :text => true
-  String  :last_error, :text => true
+  Integer :priority, default: 0
+  Integer :attempts, default: 0
+  String  :handler, text: true
+  String  :last_error, text: true
   Time    :run_at
   Time    :locked_at
   Time    :failed_at
@@ -63,7 +84,7 @@ end
 DB.create_table :stories do
   primary_key :story_id
   String      :text
-  TrueClass   :scoped, :default => true
+  TrueClass   :scoped, default: true
 end
 
 require "delayed_job_sequel"

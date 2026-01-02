@@ -49,10 +49,10 @@ describe Delayed::Backend::Sequel::Job do
         described_class.create(failed_at: Time.now)
         expect do
           expect(
-            Delayed::Job.count(:conditions => "failed_at is not NULL")
+            Delayed::Job.count(conditions: "failed_at is not NULL")
           ).to eq 1
           expect(
-            Delayed::Job.count(:conditions => "locked_by is not NULL")
+            Delayed::Job.count(conditions: "locked_by is not NULL")
           ).to eq 0
         end.to_not raise_error
       end
@@ -62,10 +62,10 @@ describe Delayed::Backend::Sequel::Job do
         described_class.create(queue: "important", priority: 1)
         expect do
           expect(
-            Delayed::Job.count(:group => "queue", :conditions => ['run_at < ? and failed_at is NULL', Time.now])
+            Delayed::Job.count(group: "queue", conditions: ['run_at < ? and failed_at is NULL', Time.now])
           ).to match_array [["slow", 1], ["important", 1]]
           expect(
-            Delayed::Job.count(:group => "priority", :conditions => ['run_at < ? and failed_at is NULL', Time.now])
+            Delayed::Job.count(group: "priority", conditions: ['run_at < ? and failed_at is NULL', Time.now])
           ).to match_array [[1, 1], [2, 1]]
         end.to_not raise_error
       end
@@ -107,7 +107,7 @@ describe Delayed::Backend::Sequel::Job do
   describe "enqueue" do
     it "should allow enqueue hook to modify job at DB level" do
       later = described_class.db_time_now + 20.minutes
-      job = Delayed::Backend::Sequel::Job.enqueue :payload_object => EnqueueJobMod.new
+      job = Delayed::Backend::Sequel::Job.enqueue payload_object: EnqueueJobMod.new
       expect(
         Delayed::Backend::Sequel::Job[job.id].run_at
       ).to be_within(1).of(later)
@@ -117,14 +117,14 @@ end
 
 describe Delayed::Backend::Sequel::Job, "override table name" do
   it "allows to override the table name" do
-    ::Sequel::Model.db.transaction :rollback => :always do
+    ::Sequel::Model.db.transaction rollback: :always do
       begin
         DB.create_table :another_delayed_jobs do
           primary_key :id
-          Integer :priority, :default => 0
-          Integer :attempts, :default => 0
-          String  :handler, :text => true
-          String  :last_error, :text => true
+          Integer :priority, default: 0
+          Integer :attempts, default: 0
+          String  :handler, text: true
+          String  :last_error, text: true
           Time    :run_at
           Time    :locked_at
           Time    :failed_at
