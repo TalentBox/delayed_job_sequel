@@ -57,6 +57,11 @@ jobs:
       BUNDLE_GEMFILE: "ci/Gemfile.ci"
     steps:
       - uses: actions/checkout@v3
+      - name: Install latest PostgreSQL pgdg apt repo
+        run: |
+          sudo apt install -y postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt purge -y postgresql-client-common
       - name: Install db dependencies and check connections
         run: |
           DEBIAN_FRONTEND="noninteractive" sudo apt-get install -yqq mysql-client libmysqlclient-dev postgresql-client libpq-dev
