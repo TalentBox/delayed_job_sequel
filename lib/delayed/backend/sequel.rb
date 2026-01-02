@@ -20,10 +20,10 @@ module Delayed
             filter do
               (
                 (run_at <= db_time_now) &
-                ::Sequel.expr(:locked_at => nil) |
+                ::Sequel.expr(locked_at: nil) |
                 (::Sequel.expr(:locked_at) < lock_upper_bound) |
-                {:locked_by => worker_name}
-              ) & {:failed_at => nil}
+                {locked_by: worker_name}
+              ) & {failed_at: nil}
             end
           end
 
@@ -41,7 +41,7 @@ module Delayed
 
         # When a worker is exiting, make sure we don't have any locked jobs.
         def self.clear_locks!(worker_name)
-          filter(:locked_by => worker_name).update(:locked_by => nil, :locked_at => nil)
+          filter(locked_by: worker_name).update(locked_by: nil, locked_at: nil)
         end
 
         # adapted from
@@ -51,7 +51,7 @@ module Delayed
 
           ds = ds.filter(::Sequel.lit("priority >= ?", Worker.min_priority)) if Worker.min_priority
           ds = ds.filter(::Sequel.lit("priority <= ?", Worker.max_priority)) if Worker.max_priority
-          ds = ds.filter(:queue => Worker.queues) if Worker.queues.any?
+          ds = ds.filter(queue: Worker.queues) if Worker.queues.any?
           ds = ds.by_priority
 
           case ::Sequel::Model.db.database_type
@@ -70,7 +70,7 @@ module Delayed
             if job = ds.first
               job.locked_at = self.db_time_now
               job.locked_by = worker.name
-              job.save(:raise_on_failure => true)
+              job.save(raise_on_failure: true)
               job
             end
           end
@@ -108,7 +108,7 @@ module Delayed
         end
 
         def save!
-          save :raise_on_failure => true
+          save raise_on_failure: true
         end
 
         def update_attributes(attrs)
@@ -116,7 +116,7 @@ module Delayed
         end
 
         def self.create!(attrs)
-          new(attrs).save :raise_on_failure => true
+          new(attrs).save raise_on_failure: true
         end
 
         def self.silence_log(&block)

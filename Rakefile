@@ -9,4 +9,4 @@ RSpec::Core::RakeTask.new do |r|
   r.verbose = false
 end
 
-task :default => :spec
+task default: :spec

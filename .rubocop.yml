@@ -1,0 +1,22 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Include:
+    - '**/Gemfile'
+    - '**/config.ru'
+    - '**/Rakefile'
+    - '**/*.rake'
+    - '**/*.gemfile'
+    - '**/*.gemspec'
+    - '**/*.rb'
+  Exclude:
+    - 'ci/**/*'
+    - 'vendor/bundle/**/*'
+  SuggestExtensions: false
+  NewCops: disable
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
