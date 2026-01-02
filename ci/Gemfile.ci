@@ -4,15 +4,15 @@ gemspec :path => "../"
 
 gem "sequel", "#{ENV["SEQUEL"]}"
 
-case ENV["DB"]
-when "mysql"
+case ENV["TEST_ADAPTER"]
+when /mysql/
   platforms :ruby do
     gem "mysql2"
   end
   platforms :jruby do
     gem "jdbc-mysql"
   end
-when "postgres"
+when /postgres/
   platforms :ruby do
     gem "pg"
   end
